@@ -1,6 +1,6 @@
-export const PersonForm = ({ onNameSubmit, newName, onNameChange, newNumber, onNumberChange }) => {
+export const PersonForm = ({ onPersonSubmit, newName, onNameChange, newNumber, onNumberChange }) => {
     return(
-        <form onSubmit={onNameSubmit}>
+        <form onSubmit={onPersonSubmit}>
 				<div>
 					<div>
 						name: <input type="text" value={newName} onChange={onNameChange} />
