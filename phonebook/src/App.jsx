@@ -11,6 +11,8 @@ const App = () => {
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
 	const [searchedName, setSearchedName] = useState('');
+	const [addedPerson, setAddedPerson] = useState('');
+	const [errorMsg, setErrorMsg] = useState('');
 
 	useEffect(() => {
 		personService.getAllPersons().then(({ data })=> setPersons(data));
@@ -35,6 +37,7 @@ const App = () => {
 
 			if (confirmUpdate) {
 				const updatedPerson = { ...existingPerson, number: newNumber };
+
 				personService.updatePerson(existingPerson.id, updatedPerson)
 					.then(({ data }) => {
 						setPersons(persons.map(person =>
@@ -43,7 +46,10 @@ const App = () => {
 						setNewName('');
 						setNewNumber('');
 					})
-					.catch(error => console.error('Error updating person:', error));
+					.catch(error => {
+						console.error('Error updating person:', error);
+						setErrorMsg(`Information of ${newName} has already been removed from the server`);
+					});
 			}
 		} else {
 			personService.createPerson({ name: newName, number: newNumber })
@@ -53,15 +59,17 @@ const App = () => {
 					setNewNumber('');
 				})
 				.catch(error => console.error('Error adding person:', error));
+				setAddedPerson(newName);
 		}
 	};
-
 
 	const filteredPersons = persons?.filter(({ name }) => name?.toLowerCase().includes(searchedName.toLowerCase()));
 
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			{addedPerson && <div className="added-person">{`Added ${addedPerson}`}</div>}
+			{errorMsg && <div className="error">{errorMsg}</div>}
 			<Filter searchedName={searchedName} onNameSearch={handleNameSearch}/>
 			<h3>Add a new person</h3>
 			<PersonForm
